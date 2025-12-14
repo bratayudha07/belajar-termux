@@ -1,51 +1,68 @@
-#!/usr/bin/env bash
-#cursor bar or bold pipe
-#echo -e "\e[2 q"
+#!/usr/bin/env zsh
+# ==================================================
+# FILE: ~/.autostart
+# PURPOSE:
+#   - Force underline cursor (zsh, Termux)
+#   - Keep SSH agent block (commented)
+#   - Run rxfetch on interactive shell
+# ==================================================
 
+# Jalankan hanya di shell interaktif
+[[ -o interactive ]] || return
+
+# --------------------------------------------------
+# ENV dasar
+# --------------------------------------------------
 export COLUMNS LINES
 
-#cursor underline    
-echo -e "\e[4 q"
+# --------------------------------------------------
+# FORCE CURSOR UNDERLINE (terminal escape sequence)
+# --------------------------------------------------
+_fix_cursor() {
+  # Pastikan output ke terminal
+  [[ -t 1 ]] || return
 
-#cursor pipe
-#echo -e "\e[6 q"
+  # ESC [ 4 q  -> underline steady
+  printf '[4 q'
+}
 
-#c
+# Set cursor setiap kali prompt muncul (zsh-native)
+precmd_functions+=(_fix_cursor)
 
-#if [ "$TMUX" == "" ]; then
+# Set sekali saat shell pertama kali load (aman & cepat)
+_fix_cursor
 
-#  tmux
+# --------------------------------------------------
+# RXFETCH (tetap dipertahankan)
+# --------------------------------------------------
+# Tampilkan system info sekali saat shell start
+if command -v rxfetch >/dev/null 2>&1; then
+  rxfetch
+fi
 
-#fi
+# ==================================================
+# SSH AGENT (DIKOMENTARI - JANGAN DIHAPUS)
+# ==================================================
 
-#if [ ! -f ~/.scripts/pid/login ]; then
-        
-  # bash ~/.scripts/login.sh
+# SSH Agent (opsional)
+# SSH_ENV="${HOME}/.ssh/agent-environment"
+# function start_agent {
+#   termux-toast -b "#FFFFFF" -c "#000000" -g top "Initialising new SSH Agent" &> /dev/null
+#   ssh-agent | sed 's/^echo/#echo/' > "${SSH_ENV}"
+#   termux-toast -b "#FFFFFF" -c "#000000" -g top "Succeeded" &> /dev/null
+#   chmod 600 "${SSH_ENV}"
+#   . "${SSH_ENV}" > /dev/null
+#   ssh-add
+# }
+# if [ -f "${SSH_ENV}" ]; then
+#   . "${SSH_ENV}" > /dev/null
+#   ps -ef | grep ${SSH_AGENT_PID} | grep ssh-agent$ > /dev/null || {
+#     start_agent
+#   }
+# else
+#   start_agent
+# fi
 
-#fi
-
-#neo
-#clear
-rxfetch
-
-# SSH for Git & GitHub!
-#SSH_ENV="${HOME}/.ssh/agent-environment"
-
-#function start_agent {
-#  termux-toast -b "#FFFFFF" -c "#000000" -g top "Initialising new SSH Agent" &> /dev/null
-#  ssh-agent | sed 's/^echo/#echo/' > "${SSH_ENV}"
-
-#  termux-toast -b "#FFFFFF" -c "#000000" -g top "Succeeded" &> /dev/null
-#  chmod 600 "${SSH_ENV}"
-#  . "${SSH_ENV}" > /dev/null
-#  ssh-add;
-#}
-
-#if [ -f "${SSH_ENV}" ]; then
-#  . "${SSH_ENV}" > /dev/null
-#  ps -ef | grep ${SSH_AGENT_PID} | grep ssh-agent$ > /dev/null || {
-#    start_agent;
-#  }
-#else
-#  start_agent
-#fi
+# ==================================================
+# END
+# ==================================================
