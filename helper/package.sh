@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
 PACKAGES=(
-  awesomeshot bat curl clang eza fzf git imagemagick
-  inotify-tools lf mpd mpc neovim openssh
-  neofetch termux-api tmux zsh
+  bat curl clang eza fzf git
+  lf neovim openssh
+  neofetch termux-api zsh
 )
 
 function packages() {
