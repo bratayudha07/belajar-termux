@@ -4,7 +4,7 @@
 # PURPOSE:
 #   - Force underline cursor (zsh, Termux)
 #   - Keep SSH agent block (commented)
-#   - Run rxfetch on interactive shell
+#   - Run rxfetch on interactive shell (EXCEPT inside nvim)
 # ==================================================
 
 # Jalankan hanya di shell interaktif
@@ -23,7 +23,7 @@ _fix_cursor() {
   [[ -t 1 ]] || return
 
   # ESC [ 4 q  -> underline steady
-  printf '[4 q'
+  printf '\e[4 q'
 }
 
 # Set cursor setiap kali prompt muncul (zsh-native)
@@ -33,10 +33,11 @@ precmd_functions+=(_fix_cursor)
 _fix_cursor
 
 # --------------------------------------------------
-# RXFETCH (tetap dipertahankan)
+# RXFETCH (Diupdate)
 # --------------------------------------------------
 # Tampilkan system info sekali saat shell start
-if command -v rxfetch >/dev/null 2>&1; then
+# HANYA jika rxfetch terinstall DAN TIDAK didalam Neovim
+if command -v rxfetch >/dev/null 2>&1 && [[ -z "$NVIM" ]]; then
   rxfetch
 fi
 
